@@ -30,8 +30,8 @@ pip install -r requirements.txt
 
 ### 配置
 需要修改`.env`文件，具体参数说明如下：
-- REDIS_CSV_NAME：作为csv文件向量化数据的key值，例如：`we_qa_csv`
-- CSV_FILE_NAME：存储在`data`目录下的csv文件，可以存多个csv，但是这里只能指定一个唯一的，例如：`test.csv`
+- REDIS_CSV_NAME：作为csv文件向量化数据的key值，例如：`we_qa_csv` ，可以不修改
+- CSV_FILE_NAME：存储在`data`目录下的csv文件，指定用于问答的csv文件，这里只能指定一个唯一的，例如：`test.csv` 
 - OPENAI_API_BASE：openAI代理地址设置，例如：`https://xxxxx.com/v1` ，如果无需使用代理，请留空即可，默认会走官方接口
 - EXPIRE_DAYS：所有api_key在redis中的可留存时间，例如：`900` (默认单位为`天数`)
 
@@ -72,8 +72,23 @@ POST /initialize
 }
 ```
 
+### 2. 上传文件接口
+目前仅支持单文件上传，上传后会存储在项目data目录下，请注意修改.env下的wt.csv
+```
+POST /upload_file
+content-type: multipart/form-data
+```
 
-### 2. 问答接口
+**成功示例**
+```
+{
+    "code": 200,
+    "data": "上传成功"
+}
+```
+
+
+### 3. 问答接口
 ```
 POST /ask
 content-type: application/json
@@ -129,7 +144,7 @@ content-type: application/json
 ```
 
 
-### 3. 查询api状态接口
+### 4. 查询api状态接口
 ```
 GET /api_key/management
 ```
@@ -164,7 +179,7 @@ GET /api_key/management
 }
 ```
 
-### 4. 添加api_key接口
+### 5. 添加api_key接口
 ```
 POST /api_key/add
 content-type: application/json
@@ -193,15 +208,6 @@ content-type: application/json
             "your_email2":"your_api_key2"
         }
     ]
-}
-```
-
-**失败示例**
-```
-{
-    "code":500,
-    "msg": "
-
 }
 ```
 

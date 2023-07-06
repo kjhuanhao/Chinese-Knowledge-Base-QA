@@ -1,7 +1,7 @@
 import uvicorn
 import os
 
-from fastapi import Body, FastAPI
+from fastapi import Body, UploadFile, FastAPI
 from fastapi.responses import StreamingResponse, JSONResponse
 from utils.initialize_storage import Storage
 from common.status_code import HttpStatusCode
@@ -48,6 +48,26 @@ def api_key_management():
 @app.post("/api_key/add")
 def add_api_key(api_key: list[dict[str, str]] = Body(embed=True)):
     return JSONResponse(ApiStatusManagement().add_api_key(api_key))
+
+
+@app.post("/upload_file/")
+async def create_upload_file(file: UploadFile):
+    fn = file.filename
+    save_path = f'./data/'
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+    save_file = os.path.join(save_path, fn)
+    f = open(save_file, 'wb')
+    data = await file.read()
+    f.write(data)
+    f.close()
+
+    return JSONResponse(
+        {
+            "code": HttpStatusCode.SUCCESS.value,
+            "data": "上传成功",
+        }
+    )
 
 
 # @app.get("/")
