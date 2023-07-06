@@ -31,7 +31,7 @@ pip install -r requirements.txt
 ### 配置
 需要修改`.env`文件，具体参数说明如下：
 - REDIS_CSV_NAME：作为csv文件向量化数据的key值，例如：`we_qa_csv`
-- CSV_FILE_NAME：存储在`common`目录下的csv文件，可以存多个csv，但是这里只能指定一个唯一的，例如：`test.csv`
+- CSV_FILE_NAME：存储在`data`目录下的csv文件，可以存多个csv，但是这里只能指定一个唯一的，例如：`test.csv`
 - OPENAI_API_BASE：openAI代理地址设置，例如：`https://xxxxx.com/v1` ，如果无需使用代理，请留空即可，默认会走官方接口
 - EXPIRE_DAYS：所有api_key在redis中的可留存时间，例如：`900` (默认单位为`天数`)
 

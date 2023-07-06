@@ -1,3 +1,5 @@
 qa_test.ipynb
 cache_test.ipynb
 data/
+.idea
+__pycache__/
