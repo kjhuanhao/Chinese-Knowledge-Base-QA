@@ -2,7 +2,7 @@
 # @FileName  : initialize_storage.py
 # @Time      : 2023/7/5
 # @Author    : LaiJiahao
-# @Desc      : None
+# @Desc      : 初始化csv向量数据，存入redis
 import os
 from utils.embedding_vector import EmbeddingsVectorTool
 from utils.redis_storage import RedisTool
@@ -24,8 +24,9 @@ class Storage:
         df_embedding = self.embedding_vector_tool.get_df_embedding(df)
         redis_tool = RedisTool()
         redis_tool.set(os.getenv("REDIS_CSV_NAME"), str(df_embedding))
-        vector_data = redis_tool.get("REDIS_CSV_NAME")
-        if vector_data:
+        vector_data = redis_tool.get(os.getenv("REDIS_CSV_NAME"))
+
+        if vector_data is not None:
             return {
                 "code": HttpStatusCode.SUCCESS.value,
                 "data": "初始化成功",

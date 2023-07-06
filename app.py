@@ -70,9 +70,9 @@ async def create_upload_file(file: UploadFile):
     )
 
 
-# @app.get("/")
-# async def homepage():
-#     return "test"
+@app.get("/")
+async def homepage():
+    return "test"
 
 
 if __name__ == "__main__":
