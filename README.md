@@ -74,7 +74,7 @@ POST /initialize
 ```
 
 ### 2. 上传文件接口
-目前仅支持单文件上传，上传后会存储在项目data目录下，请注意修改.env下的wt.csv
+目前仅支持单文件上传，上传后会存储在项目data目录下，请注意修改.env下的`CSV_FILE_NAME`
 ```
 POST /upload_file
 content-type: multipart/form-data
@@ -234,7 +234,7 @@ content-type: application/json
 }
 ```
 
-# 7. 删除api_key接口
+### 7. 删除api_key接口
 ```
 POST /api_key/delete_api_key
 content-type: application/json
