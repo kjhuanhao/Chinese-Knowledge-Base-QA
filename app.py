@@ -45,11 +45,13 @@ def api_key_management():
         )
 
 
+# api_key添加接口
 @app.post("/api_key/add")
 def add_api_key(api_key: list[dict[str, str]] = Body(embed=True)):
     return JSONResponse(ApiStatusManagement().add_api_key(api_key))
 
 
+# 上传文件接口
 @app.post("/upload_file/")
 async def create_upload_file(file: UploadFile):
     fn = file.filename
@@ -68,6 +70,25 @@ async def create_upload_file(file: UploadFile):
             "data": "上传成功",
         }
     )
+
+
+# 全局异常处理
+@app.exception_handler(Exception)
+async def handle_exception(request, exc):
+    return JSONResponse(status_code=500, content={"code": HttpStatusCode.SERVER_ERROR.value, "msg": str(exc)})
+
+
+# api_key欠费接口
+@app.get("/api_key/owe")
+def owe():
+    return JSONResponse({
+        "code": HttpStatusCode.SUCCESS.value, "data": ApiStatusManagement().get_owe_api_keys()
+    })
+
+
+@app.post("/api_key/delete_api_key")
+def delete_api_key(emails_list: list[str] = Body(embed=True)):
+    return JSONResponse(ApiStatusManagement().delete_api_keys(emails_list))
 
 
 @app.get("/")

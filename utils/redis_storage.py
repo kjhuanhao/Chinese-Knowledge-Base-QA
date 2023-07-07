@@ -29,8 +29,8 @@ class RedisTool:
         r = redis.Redis(connection_pool=poll)
         self.connection = r
 
-    def set(self, key, value):
-        self.connection.set(key, value)
+    def set(self, key, value, nx=False):
+        self.connection.set(key, value, nx=nx)
         # 设置过期时间
         self.connection.expireat(key, self.expire_at)
 
@@ -56,10 +56,12 @@ class RedisTool:
         values = self.connection.mget(keys)
         return values
 
-    # def get_keys_value(self,directory: str) -> list:
-    #     keys = self.get_keys(directory)
-    #     values = self.connection.mget(keys)
-    #     return [dict(zip(keys, values))]
+    def delete_keys(self, directory: list[str]) -> list:
+        error_keys = []
+        for i in directory:
+            if not self.connection.delete(i):
+                error_keys.append(i)
+        return error_keys
 
 # r = RedisTool()
 # print(r.get_values("name:*"))

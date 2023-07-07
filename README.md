@@ -146,6 +146,7 @@ content-type: application/json
 
 
 ### 4. 查询api状态接口
+该接口在查询的同时，回去检测异常的api_key和余额耗尽的api_key，如果检测到，会存入redis中，在调用ask接口时，会过滤掉异常的api_key值
 ```
 GET /api_key/management
 ```
@@ -212,3 +213,24 @@ content-type: application/json
 }
 ```
 
+# 6. 删除api_key接口
+```
+POST /api_key/delete_api_key
+content-type: application/json
+
+{
+    "emails_list": [
+        "your_email1",
+    ]
+}
+```
+
+**成功示例**
+```
+{
+    "code": 200,
+    "fail_emails": [
+        "OPENAI_API_KEY:12"
+    ]
+}
+```
