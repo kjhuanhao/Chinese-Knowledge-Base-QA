@@ -145,10 +145,10 @@ content-type: application/json
 ```
 
 
-### 4. 查询api状态接口
-该接口在查询的同时，回去检测异常的api_key和余额耗尽的api_key，如果检测到，会存入redis中，在调用ask接口时，会过滤掉异常的api_key值
+### 4. 查询api状态接口(有效的key)
+该接口在查询的同时，会去检测异常的api_key和余额耗尽的api_key，如果检测到，会存入redis中，在调用ask接口时，会过滤掉异常的api_key值
 ```
-GET /api_key/management
+GET /api_key/valid
 ```
 
 **成功示例**
@@ -181,7 +181,28 @@ GET /api_key/management
 }
 ```
 
-### 5. 添加api_key接口
+### 5. 查询api状态接口(无效的key)
+```
+GET /api_key/invalid
+```
+
+**成功示例**
+```
+{
+    "code": 200,
+    "data": {
+        "owe_keys": [
+            {
+                "test01@laijiahao.cn": "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"
+            }
+        ],
+        "error_keys": []
+    }
+}
+```
+
+
+### 6. 添加api_key接口
 ```
 POST /api_key/add
 content-type: application/json
@@ -213,7 +234,7 @@ content-type: application/json
 }
 ```
 
-# 6. 删除api_key接口
+# 7. 删除api_key接口
 ```
 POST /api_key/delete_api_key
 content-type: application/json
@@ -234,3 +255,4 @@ content-type: application/json
     ]
 }
 ```
+

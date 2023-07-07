@@ -25,7 +25,7 @@ def ask(body: dict):
 
 
 # api_key状态管理接口
-@app.get("/api_key/management")
+@app.get("/api_key/valid")
 def api_key_management():
     try:
         data = ApiStatusManagement.get_billing()
@@ -79,10 +79,10 @@ async def handle_exception(request, exc):
 
 
 # api_key欠费接口
-@app.get("/api_key/owe")
+@app.get("/api_key/invalid")
 def owe():
     return JSONResponse({
-        "code": HttpStatusCode.SUCCESS.value, "data": ApiStatusManagement().get_owe_api_keys()
+        "code": HttpStatusCode.SUCCESS.value, "data": ApiStatusManagement().get_invalid_api_keys()
     })
 
 

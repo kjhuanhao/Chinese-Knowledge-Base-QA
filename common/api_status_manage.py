@@ -5,7 +5,7 @@
 # @Desc      : api_key状态管理
 
 from dotenv import load_dotenv
-from common.dynamic_module import get_key, dynamic_proxy
+from common.dynamic_module import dynamic_proxy
 from utils.redis_storage import RedisTool
 from common.status_code import HttpStatusCode
 import requests
@@ -70,7 +70,7 @@ class ApiStatusManagement:
                     balance = total - total_usage
 
                     # 欠费的api_key
-                    if balance < 0:
+                    if balance > 0:
                         # 存入欠费名单
                         redis_tool.set("OPENAI_API_KEY_OWE:" + redis_key.replace("OPENAI_API_KEY:", ""), value)
                         # 删除有效api_key
@@ -98,13 +98,22 @@ class ApiStatusManagement:
         }
 
     @staticmethod
-    def get_owe_api_keys():
+    def get_invalid_api_keys():
         redis_tool = RedisTool()
-        redis_keys = redis_tool.get_keys("OPENAI_API_KEY_OWE:*")
-        datas = []
-        for redis_key in redis_keys:
-            value = redis_tool.get(redis_key)
-            datas.append({redis_key.replace("OPENAI_API_KEY_OWE:", ""): value})
+        owe_keys = redis_tool.get_keys("OPENAI_API_KEY_OWE:*")
+        error_keys = redis_tool.get_keys("OPENAI_API_KEY_ERROR:*")
+        datas = {
+            "owe_keys": [],
+            "error_keys": []
+        }
+
+        for owe_key in owe_keys:
+            value = redis_tool.get(owe_key)
+            datas['owe_keys'].append({owe_key.replace("OPENAI_API_KEY_OWE:", ""): value})
+        for error_key in error_keys:
+            value = redis_tool.get(error_key)
+            datas['error_keys'].append({error_key.replace("OPENAI_API_KEY_ERROR:", ""): value})
+
         return datas
 
     @staticmethod
