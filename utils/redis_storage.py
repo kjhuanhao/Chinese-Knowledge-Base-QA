@@ -8,22 +8,23 @@ import os
 import datetime
 from dotenv import load_dotenv
 
-load_dotenv(override=True,verbose=True)
+load_dotenv(override=True, verbose=True)
 
 
 class RedisTool:
 
-    def __init__(self, host='0.0.0.0', port=6379, password=None):
-        self.host = host
-        self.port = port
-        self.password = password
+    def __init__(self):
+        self.host = os.getenv("REDIS_HOST")
+        self.port = os.getenv("REDIS_PORT")
+        self.password = os.getenv("REDIS_PASSWORD")
+        self.db = os.getenv("REDIS_DB")
         self.connection = None
         expiration = datetime.timedelta(days=int(os.getenv("EXPIRE_DAYS")))
         self.expire_at = datetime.datetime.now() + expiration
         poll = redis.ConnectionPool(host=self.host,
                                     port=self.port,
                                     password=self.password,
-                                    db=3,
+                                    db=self.db,
                                     decode_responses=True)
 
         r = redis.Redis(connection_pool=poll)

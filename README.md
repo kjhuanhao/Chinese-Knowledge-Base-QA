@@ -45,7 +45,7 @@ csv文件上传后会存储在项目data目录下，项目默认支持两列，�
 ### 运行
 fastapi使用的是`uvicorn`，本项目`app.py`直接运行即可
 ```bash
-python3 app.py
+python3 main.py
 ```
 
 ## 相关接口
