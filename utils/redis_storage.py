@@ -13,7 +13,7 @@ load_dotenv(override=True,verbose=True)
 
 class RedisTool:
 
-    def __init__(self, host='localhost', port=6379, password=None):
+    def __init__(self, host='0.0.0.0', port=6379, password=None):
         self.host = host
         self.port = port
         self.password = password
@@ -23,7 +23,7 @@ class RedisTool:
         poll = redis.ConnectionPool(host=self.host,
                                     port=self.port,
                                     password=self.password,
-                                    db=1,
+                                    db=3,
                                     decode_responses=True)
 
         r = redis.Redis(connection_pool=poll)

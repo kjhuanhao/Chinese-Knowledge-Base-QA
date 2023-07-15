@@ -86,6 +86,7 @@ def owe():
     })
 
 
+# 删除apikey接口
 @app.post("/api_key/delete_api_key")
 def delete_api_key(emails_list: list[str] = Body(embed=True)):
     return JSONResponse(ApiStatusManagement().delete_api_keys(emails_list))
