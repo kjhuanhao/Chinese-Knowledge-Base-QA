@@ -19,7 +19,7 @@ def tokenlizer_csv(file_root: str) -> pd.DataFrame:
 
     df = pd.read_csv(file_root)
     df = df[["question", "answer"]]
-    df["summarized"] = ("question: " + df.question.str.strip() + "; answer: " + df.answer.str.strip())
+    df["summary"] = ("question: " + df.question.str.strip() + "; answer: " + df.answer.str.strip())
 
-    df["tokens"] = df.summarized.apply(lambda x: len(encoding.encode(x)))
+    df["tokens"] = df.summary.apply(lambda x: len(encoding.encode(x)))
     return df

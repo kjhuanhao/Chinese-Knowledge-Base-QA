@@ -3,7 +3,7 @@ fetch('http://127.0.0.1:8000/ask', {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ question: 'how about the dormitory' })
+  body: JSON.stringify({ question: '宿舍怎么样' })
 })
   .then(response => {
     const reader = response.body.getReader();

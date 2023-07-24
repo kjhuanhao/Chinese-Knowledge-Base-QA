@@ -13,7 +13,6 @@ from langchain.callbacks import AsyncIteratorCallbackHandler
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 from parsers import csv_parser
-from utils.redis_storage import RedisTool
 from utils.prompt import PromptTool
 from typing import AsyncIterable, Awaitable
 from common.dynamic_module import dynamic_key, dynamic_proxy
@@ -35,15 +34,15 @@ async def wait_done(fn: Awaitable, event: asyncio.Event):
 async def call_openai(question: str) -> AsyncIterable[str]:
     callback = AsyncIteratorCallbackHandler()
     df = csv_parser.tokenlizer_csv('data/' + os.getenv("CSV_FILE_NAME"))
-    redis_tool = RedisTool()
-    vector_data = eval(redis_tool.get(os.getenv("REDIS_CSV_NAME")))
     proxy = dynamic_proxy()
     api_key = dynamic_key()
-    prompt_tool = PromptTool(question=question, context_embeddings=vector_data, df=df)
+
+    prompt_tool = PromptTool(question=question, df=df)
 
     # 智能prompt，根据相似度返回前三个
     build_prompt = prompt_tool.create_prompt()
     prompt = build_prompt['prompt']
+    print(prompt)
     possibility_question = build_prompt['possibility_question']
 
     # print(prompt)

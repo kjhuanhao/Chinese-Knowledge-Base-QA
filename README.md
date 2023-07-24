@@ -25,9 +25,14 @@ csv表格形式有利于构建prompt，可以更加精准进行匹配向量和�
 
 ## 使用说明
 
-### 必备模块
+### 必备模块 
 ```bash
 pip install -r requirements.txt
+```
+
+```bash
+git lfs install
+git clone https://huggingface.co/shibing624/text2vec-base-chinese
 ```
 
 ### 配置
