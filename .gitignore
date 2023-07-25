@@ -3,3 +3,4 @@ cache_test.ipynb
 data/
 .idea
 __pycache__/
+.env

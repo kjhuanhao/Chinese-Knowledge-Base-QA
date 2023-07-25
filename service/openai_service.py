@@ -17,7 +17,7 @@ from utils.prompt import PromptTool
 from typing import AsyncIterable, Awaitable
 from common.dynamic_module import dynamic_key, dynamic_proxy
 
-load_dotenv(verbose=True,override=True)
+load_dotenv(verbose=True, override=True)
 
 
 async def wait_done(fn: Awaitable, event: asyncio.Event):
