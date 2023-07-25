@@ -24,27 +24,6 @@ def ask(body: dict):
     return StreamingResponse(call_openai(body['question']), media_type='text/event-stream')
 
 
-# api_key状态管理接口
-@app.get("/api_key/valid")
-def api_key_management():
-    try:
-        data = ApiStatusManagement.get_billing()
-        return JSONResponse(
-            {
-                "code": HttpStatusCode.SUCCESS.value,
-                "data": data
-            }
-        )
-    except Exception as e:
-        return JSONResponse(
-            {
-                "code": HttpStatusCode.SERVER_ERROR.value,
-                "msg": "服务器出错",
-                "error": e
-            }
-        )
-
-
 # api_key添加接口
 @app.post("/api_key/add")
 def add_api_key(api_key: list[dict[str, str]] = Body(embed=True)):
@@ -78,18 +57,16 @@ async def handle_exception(request, exc):
     return JSONResponse(status_code=500, content={"code": HttpStatusCode.SERVER_ERROR.value, "msg": str(exc)})
 
 
-# api_key欠费接口
-@app.get("/api_key/invalid")
-def owe():
-    return JSONResponse({
-        "code": HttpStatusCode.SUCCESS.value, "data": ApiStatusManagement().get_invalid_api_keys()
-    })
-
-
 # 删除apikey接口
 @app.post("/api_key/delete_api_key")
 def delete_api_key(emails_list: list[str] = Body(embed=True)):
     return JSONResponse(ApiStatusManagement().delete_api_keys(emails_list))
+
+
+# 获取所有apikey接口
+@app.get("/api_key/get_all_api_keys")
+def get_all_api_keys():
+    return JSONResponse(ApiStatusManagement().get_all_api_keys())
 
 
 @app.get("/")
