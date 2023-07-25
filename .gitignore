@@ -1,5 +1,4 @@
-qa_test.ipynb
-cache_test.ipynb
+*.ipynb
 data/
 .idea
 __pycache__/
