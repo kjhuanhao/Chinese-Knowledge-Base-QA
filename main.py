@@ -21,7 +21,8 @@ def initialize():
 # 询问接口
 @app.post("/ask")
 def ask(body: dict):
-    return StreamingResponse(call_openai(body['question']), media_type='text/event-stream')
+    headers = {"Transfer-Encoding": "chunked"}
+    return StreamingResponse(call_openai(body['question']), media_type='text/event-stream', headers=headers)
 
 
 # api_key添加接口

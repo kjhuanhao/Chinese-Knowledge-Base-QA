@@ -117,10 +117,14 @@ content-type: application/json
 ```
 
 **成功示例**
-直接返回普通的str
+```
+"{"code": "200", "data": "..."}"
+```
 
 **失败示例**
-暂时未做
+```
+"{"code": "500", "msg": "error"}"
+```
 
 
 

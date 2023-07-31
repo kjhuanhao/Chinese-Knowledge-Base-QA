@@ -60,8 +60,8 @@ async def call_openai(question: str) -> AsyncIterable[str]:
 
     async for token in callback.aiter():
         if token == "NO":
-            yield f"对不起，您的问题没有在我们的问答库，您可以尝试换个问法，或者提交反馈给我们，如下是相似的问题: \n{possibility_question}"
+            yield str({"code": 200, "data": f"对不起，您的问题没有在我们的问答库，您可以尝试换个问法，或者提交反馈给我们，如下是相似的问题: \n{possibility_question}"})
         else:
-            yield f'{token}'
+            yield str({"code": 200, "data": token})
 
     await task

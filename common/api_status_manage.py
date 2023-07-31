@@ -5,7 +5,7 @@
 # @Desc      : api_key状态管理
 
 from dotenv import load_dotenv
-from utils.redis_storage import RedisTool
+from common.redis_storage import RedisTool
 from common.status_code import HttpStatusCode
 
 load_dotenv(verbose=True)
