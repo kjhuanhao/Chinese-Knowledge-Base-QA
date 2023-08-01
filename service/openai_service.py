@@ -31,7 +31,7 @@ async def wait_done(fn: Awaitable, event: asyncio.Event):
         event.set()
 
 
-async def call_openai(question: str) -> AsyncIterable[str]:
+async def call_openai(question: str, stream: str) -> AsyncIterable[str]:
     callback = AsyncIteratorCallbackHandler()
     df = csv_parser.tokenlizer_csv('data/' + os.getenv("CSV_FILE_NAME"))
     proxy = dynamic_proxy()
@@ -42,7 +42,7 @@ async def call_openai(question: str) -> AsyncIterable[str]:
     # 智能prompt，根据相似度返回前三个
     build_prompt = prompt_tool.create_prompt()
     prompt = build_prompt['prompt']
-    print(prompt)
+    # print(prompt)
     possibility_question = build_prompt['possibility_question']
 
     # print(prompt)
@@ -60,8 +60,11 @@ async def call_openai(question: str) -> AsyncIterable[str]:
 
     async for token in callback.aiter():
         if token == "NO":
-            yield str({"code": 200, "data": f"对不起，您的问题没有在我们的问答库，您可以尝试换个问法，或者提交反馈给我们，如下是相似的问题: \n{possibility_question}"})
+            yield f"对不起，您的问题没有在我们的问答库，您可以尝试换个问法，或者提交反馈给我们，如下是相似的问题: \n{possibility_question}"
         else:
-            yield str({"code": 200, "data": token})
+            yield token
 
     await task
+
+
+

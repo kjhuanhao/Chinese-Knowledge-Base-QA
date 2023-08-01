@@ -1,6 +1,7 @@
 import uvicorn
 import os
 
+from typing import Optional
 from fastapi import Body, UploadFile, FastAPI
 from fastapi.responses import StreamingResponse, JSONResponse
 from utils.initialize_storage import Storage
@@ -20,9 +21,23 @@ def initialize():
 
 # 询问接口
 @app.post("/ask")
-def ask(body: dict):
-    headers = {"Transfer-Encoding": "chunked"}
-    return StreamingResponse(call_openai(body['question']), media_type='text/event-stream', headers=headers)
+async def ask(body: dict):
+    stream = body.get("stream")
+    if stream is not None and stream == "0":
+        result_token = []
+        token = call_openai(body['question'], stream=stream)
+        async for i in token:
+            result_token.append(i)
+
+        result = {
+            "code": HttpStatusCode.SUCCESS.value,
+            "data": "".join(result_token)
+        }
+        return JSONResponse(result)
+
+    else:
+        stream = "1"
+        return StreamingResponse(call_openai(body['question'], stream=stream), media_type='text/event-stream')
 
 
 # api_key添加接口

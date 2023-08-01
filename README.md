@@ -112,14 +112,23 @@ POST /ask
 content-type: application/json
 
 {
-    "question": "你好"
+    "question": "你好",
+    stream: "0" #0: 不使用流式传输，1: 使用流式传输
 }
 ```
 
 **成功示例**
 ```
-"{"code": "200", "data": "..."}"
+text
 ```
+
+```
+{
+    "code": 200,
+    "data": "text"
+}
+```
+
 
 **失败示例**
 ```
