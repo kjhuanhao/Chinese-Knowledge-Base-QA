@@ -113,7 +113,7 @@ content-type: application/json
 
 {
     "question": "你好",
-    stream: "0" #0: 不使用流式传输，1: 使用流式传输
+    "stream": "0" #0: 不使用流式传输，1: 使用流式传输
 }
 ```
 
