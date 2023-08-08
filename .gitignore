@@ -3,3 +3,5 @@ data/
 .idea
 __pycache__/
 .env
+text2vec-base-chinese
+m3e-base

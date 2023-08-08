@@ -1,7 +1,6 @@
 import uvicorn
 import os
 
-from typing import Optional
 from fastapi import Body, UploadFile, FastAPI
 from fastapi.responses import StreamingResponse, JSONResponse
 from utils.initialize_storage import Storage

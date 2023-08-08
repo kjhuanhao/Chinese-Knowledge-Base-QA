@@ -6,7 +6,7 @@
 
 import random
 import os
-from common.redis_storage import RedisTool
+from utils.redis_storage import RedisTool
 
 
 def dynamic_key() -> str:

@@ -2,12 +2,14 @@
 # @FileName  : redis_storage.py
 # @Time      : 2023/7/5
 # @Author    : LaiJiahao
-# @Desc      : None
+# @Desc      : redis 存储工具
+
 import redis
 import os
 import datetime
 from dotenv import load_dotenv
-
+import json
+from typing import Union, Dict, List
 load_dotenv(override=True, verbose=True)
 
 
@@ -30,13 +32,13 @@ class RedisTool:
         r = redis.Redis(connection_pool=poll)
         self.connection = r
 
-    def set(self, key, value, nx=False):
-        self.connection.set(key, value, nx=nx)
+    def set(self, key, value: Union[List, Dict], nx=False):
+        self.connection.set(key, json.dumps(value), nx=nx)
         # 设置过期时间
         self.connection.expireat(key, self.expire_at)
 
     def get(self, key):
-        return self.connection.get(key)
+        return json.loads(self.connection.get(key))
 
     def delete(self, key):
         self.connection.delete(key)
@@ -55,6 +57,7 @@ class RedisTool:
     def get_values(self, directory: str) -> list:
         keys = self.get_keys(directory)
         values = self.connection.mget(keys)
+        values = [json.loads(i) for i in values]
         return values
 
     def delete_keys(self, directory: list[str]) -> list:
@@ -63,6 +66,10 @@ class RedisTool:
             if not self.connection.delete(i):
                 error_keys.append(i)
         return error_keys
+
+    def check_ttl(self, key):
+        ttl = self.connection.ttl(key)
+        return ttl
 
 # r = RedisTool()
 # print(r.get_values("name:*"))
