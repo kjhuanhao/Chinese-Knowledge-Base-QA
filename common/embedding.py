@@ -14,5 +14,4 @@ class EmbeddingModel:
     model = SentenceTransformer(embedding_model_name)
 
     def get_embedding(self, sentence: str) -> ndarray:
-        logger.info("embed: " + sentence)
         return self.model.encode(sentence).tolist()

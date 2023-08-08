@@ -7,14 +7,23 @@
 from utils.vectors_client import VectorsClient
 from common.status_code import HttpStatusCode
 from typing import Dict
+from utils.files_parser import FileParser
 
 
 class Storage:
 
-    def __init__(self, file_root: str):
-        self._file_root = file_root
+    def initialize(self, filename, file_type) -> Dict:
+        """
+        初始化向量数据库
+        :param filename: 文件名称
+        :param file_type: 文件类型
+        :return:
+        """
+        file_parser = FileParser()
+        vectors_client = VectorsClient()
 
-    def initialize(self) -> Dict:
+        documents = file_parser.load(filename, file_type)
+        result = vectors_client.add(documents, filename)
 
         if result:
             return {

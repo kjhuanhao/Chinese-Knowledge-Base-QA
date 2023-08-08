@@ -7,6 +7,7 @@
 import uuid
 import numpy as np
 
+from concurrent.futures import ThreadPoolExecutor
 from common.embedding import EmbeddingModel
 from typing import List
 from loguru import logger
@@ -21,7 +22,7 @@ class VectorsClient:
     def __init__(self):
         self._client = RedisTool()
 
-    def add(self, documents: List[Document], file_name: str):
+    def add(self, documents: List[Document]):
         """
         向量数据库添加文档
         :param file_name: 文档名称
@@ -32,26 +33,38 @@ class VectorsClient:
 
         texts = [doc.page_content for doc in documents]
         logger.info("正在向量化文本数据")
-        texts_embeddings = [embedding_model.get_embedding(text) for text in texts]
+        # texts_embeddings = [embedding_model.get_embedding(text) for text in texts]
 
         meta_datas = [doc.metadata for doc in documents]
         ids = [str(uuid.uuid4()) for _ in range(len(documents))]
 
         logger.info('正在存入向量数据库...')
 
-        datas = []
-        for i in range(len(documents)):
+        # datas = []
+        logger.info("总数据大小: " + str(len(documents)))
+
+        def process_document(i):
+            id_ = ids[i]
+            embedding = embedding_model.get_embedding(texts[i])
             data = {
-                "id": ids[i],
+                "id": id_,
                 "text": texts[i],
-                "embedding": texts_embeddings[i],
+                "embedding": embedding,
                 "metadata": meta_datas[i]
             }
-            datas.append(data)
-        collections = self._collection_name + f":{file_name}"
-        self._client.set(collections, datas)
+            self._client.set(self._collection_name + f":{id_}", data)
+            logger.info("embed data: " + str(i))
+            # datas.append(data)
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            for i in range(len(documents)):
+                executor.submit(process_document, i)
+
+        # collections = self._collection_name + f":{file_name}"
+        # self._client.set(collections, datas)
 
         logger.info("向量数据库存入完成")
+        return True
 
     def reset(self):
         """
@@ -61,7 +74,7 @@ class VectorsClient:
         keys = redis_tool.get_keys(self._collection_name + ":*")
         redis_tool.delete(keys)
 
-    def similarity_search(self, query: str, top_k: int = 10) -> List:
+    def similarity_search(self, query: str, top_k: int = 5) -> List:
         """
         向量数据库相似度余弦搜索
         :param query: 询问语句
@@ -76,16 +89,15 @@ class VectorsClient:
         query_embedding = embedding_model.get_embedding(query)
 
         cos_sim_list = []
-        for collection in collections:
-            for value in collection:
-                text_embedding = value["embedding"]
-                score = float(np.array(search.score_functions["cos_sim"](query_embedding, text_embedding))[0][0])
-                cos_sim_list.append(
-                    {
-                        "text": value["text"],
-                        "score": score
-                    }
-                )
+        for value in collections:
+            text_embedding = value["embedding"]
+            score = float(np.array(search.score_functions["cos_sim"](query_embedding, text_embedding))[0][0])
+            cos_sim_list.append(
+                {
+                    "text": value["text"],
+                    "score": score
+                }
+            )
 
         cos_sim_list.sort(key=lambda x: x["score"], reverse=True)
 
