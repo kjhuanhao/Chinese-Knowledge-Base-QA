@@ -1,42 +1,52 @@
 import uvicorn
 import os
 
-from fastapi import Body, UploadFile, FastAPI
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi import Body, UploadFile, FastAPI, WebSocket
+from fastapi.responses import JSONResponse
 from utils.initialize_storage import Storage
 from common.status_code import HttpStatusCode
 from common.api_status_manage import ApiStatusManagement
 from service.openai_service import call_openai
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# 配置跨域中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许所有来源
+    allow_credentials=True,  # 允许发送凭据 (如 cookies)
+    allow_methods=["*"],  # 允许所有 HTTP 方法
+    allow_headers=["*"],  # 允许所有 HTTP 头部
+)
+
+connected_websockets = set()
 
 
 # 初始化接口
 @app.post("/initialize")
 def initialize():
-    storage = Storage(file_root='data/' + os.getenv("CSV_FILE_NAME"))
-    return JSONResponse(storage.initialize())
+    pass
 
 
 # 询问接口
-@app.post("/ask")
-async def ask(body: dict):
-    stream = body.get("stream")
-    if stream is not None and stream == "0":
-        result_token = []
-        token = call_openai(body['question'], stream=stream)
-        async for i in token:
-            result_token.append(i)
+@app.websocket("/ask")
+async def ask(websocket: WebSocket):
+    await websocket.accept()
+    connected_websockets.add(websocket)
 
-        result = {
-            "code": HttpStatusCode.SUCCESS.value,
-            "data": "".join(result_token)
-        }
-        return JSONResponse(result)
+    try:
+        while websocket in connected_websockets:
+            data = await websocket.receive_text()
+            if data:
+                async for content in call_openai(data):
+                    await websocket.send_text(content)
 
-    else:
-        stream = "1"
-        return StreamingResponse(call_openai(body['question'], stream=stream), media_type='text/event-stream')
+                connected_websockets.discard(websocket)
+                connected_websockets.add(websocket)
+    finally:
+        await websocket.close()
+        connected_websockets.discard(websocket)
 
 
 # api_key添加接口

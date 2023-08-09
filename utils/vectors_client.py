@@ -55,13 +55,6 @@ class VectorsClient:
                 documents=document,
                 metadatas=meta_data
             )
-            # data = {
-            #     "id": id_,
-            #     "text": texts[i],
-            #     "embedding": embedding,
-            #     "metadata": meta_datas[i]
-            # }
-            # self._client.set(self._collection_name + f":{id_}", data)
             logger.info("embed data: " + str(i + 1))
 
         with ThreadPoolExecutor(max_workers=5) as executor:

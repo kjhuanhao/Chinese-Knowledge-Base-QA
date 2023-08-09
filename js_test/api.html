@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>连接状态: <span id="status">未连接</span></p>
+    <p>回复消息: <span id="message"></span></p>
+    <p><input id="inp"></p>
+    <button id="submit">发送</button>
+<script>
+    let status = document.getElementById('status');
+    let message = document.getElementById('message');
+    let inp = document.getElementById('inp');
+    let submit = document.getElementById('submit');
+
+    let socket = new WebSocket("ws://127.0.0.1:8000/ask")
+    socket.addEventListener("open", (event)=>{
+        status.innerText = '已连接';
+    })
+    socket.addEventListener("error", (event)=>{
+        status.innerText = '已失败'
+    })
+    socket.addEventListener("close", (event)=>{
+        status.innerText = '已关闭';
+    })
+    socket.addEventListener("message", (event)=>{
+        message.innerText = '';
+        message.innerText += event.data;
+    })
+
+    submit.addEventListener('click', ()=>{
+        socket.send(inp.value);
+    })
+
+</script>
+</body>
+</html>

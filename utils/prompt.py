@@ -5,47 +5,40 @@
 # @Desc      : 构建prompt
 
 import tiktoken
-import pandas as pd
-from utils.embedding_vector import EmbeddingsVectorTool
+from utils.vectors_client import VectorsClient
+from typing import Dict
 
 
 class PromptTool:
-    def __init__(self, question: str, df: pd.DataFrame):
-        self.question = question
-        self.df = df
 
-    # 创建一个prompt
-    def create_prompt(self) -> dict:
-        encoding = tiktoken.get_encoding("gpt2")
-        separator_len = len(encoding.encode("\n* "))
-        vector = EmbeddingsVectorTool()
+    def create_prompt(self, question) -> Dict[str, str]:
+        question_tokens = self.get_tokens(question)
 
-        relevant_sections = vector.get_query_with_similarity(self.question, self.df)
+        vectors_client = VectorsClient()
+        similarities_documents = vectors_client.similarity_search(question)
 
-        chosen_sections = []
-        chosen_sections_len = 0
-        possibility_questions = []
+        reference_documents = ""
+        tokens = question_tokens
+        documents_tokens = [self.get_tokens(doc) for doc in similarities_documents]
 
-        # example {'question': '有晨跑吗？', 'answer': '没有', 'summarized': 'question: 有晨跑吗？; answer: 没有', 'tokens': 18}
-        for item in relevant_sections:
-            chosen_sections_len += item.get("tokens") + separator_len
-            if chosen_sections_len > 1000:
+        for i in range(len(similarities_documents)):
+            if tokens + documents_tokens[i] > 3850:
                 break
+            reference_documents += f"\n{similarities_documents[i]}"
+            tokens += documents_tokens[i]
 
-            chosen_sections.append("\n* " + item.get("summary").replace("\n", ""))
+        header = f""" 你是一个文档查询助手，你的任务是根据一段参考文本，回答我的问题，如果我的问题和参考文本无关，请回复：对不起，知识库中无此相关答案"""
 
-            if len(possibility_questions) < 3:
-                possibility_questions.append(item.get("question"))
+        prompt = header + "\n参考文本:\n" + f"'''{reference_documents}'''" + f"\n我的问题是: {question}"
+        print(prompt)
+        return {
+            "prompt": prompt,
+            "documents": reference_documents
+        }
 
-        possibility_question = ""
-        count = 1
-
-        for p in possibility_questions:
-            possibility_question += str(count) + ". " + p + "\n"
-            count += 1
-
-        header = f""" Choose the semantic meaning of the text below to answer my question. If the question is unrelated to the text below, you must reply the identifier: NO" """
-        prompt = header + "".join(chosen_sections) + "\n\n Q: " + self.question + "\n A:"
-        build_prompt = {"prompt": prompt, "possibility_question": possibility_question}
-        print(build_prompt)
-        return build_prompt
+    @staticmethod
+    def get_tokens(text) -> int:
+        encoding = tiktoken.get_encoding("cl100k_base")
+        token_integers = encoding.encode(text)
+        tokens = len(token_integers)
+        return tokens
