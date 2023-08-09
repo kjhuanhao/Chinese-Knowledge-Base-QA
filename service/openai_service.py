@@ -9,15 +9,17 @@ import json
 from dotenv import load_dotenv
 from httpx import AsyncClient
 from utils.prompt import PromptTool
+from utils.dynamic_module import dynamic_key
 
 load_dotenv(verbose=True, override=True)
 
 
 async def call_openai(question: str):
     url = "https://api.openai.com/v1/chat/completions"
+    api_key = dynamic_key()
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer " + api_key
     }
 
     prompt_tool = PromptTool()

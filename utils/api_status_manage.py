@@ -54,5 +54,3 @@ class ApiStatusManagement:
             "fail_emails": result
         }
         return result
-# api = ApiStatusManagement()
-# print(api.get_billing())

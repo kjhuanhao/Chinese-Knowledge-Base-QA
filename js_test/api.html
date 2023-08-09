@@ -26,11 +26,11 @@
         status.innerText = '已关闭';
     })
     socket.addEventListener("message", (event)=>{
-        message.innerText = '';
         message.innerText += event.data;
     })
 
     submit.addEventListener('click', ()=>{
+        message.innerText = '';
         socket.send(inp.value);
     })
 

@@ -12,7 +12,6 @@ from utils.redis_storage import RedisTool
 def dynamic_key() -> str:
     redis_tool = RedisTool()
     api_keys = redis_tool.get_values("OPENAI_API_KEY:*")
-
     api_key = random.choice(api_keys)
 
     return api_key
