@@ -22,7 +22,7 @@ def dynamic_proxy() -> str:
     if proxy is not None:
         return proxy
     else:
-        return "https://api.openai.com/v1/"
+        return "https://api.openai.com/v1"
 
 
 def get_key() -> list:
