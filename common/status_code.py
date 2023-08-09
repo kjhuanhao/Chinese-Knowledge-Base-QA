@@ -9,7 +9,7 @@ from enum import Enum
 
 class HttpStatusCode(Enum):
     SUCCESS = 200
-    SERVER_ERROR = 500
+    ERROR = 500
 
     def __str__(self):
         return str(self.value)

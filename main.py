@@ -1,12 +1,14 @@
 import uvicorn
 import os
 
+from typing import Dict
 from fastapi import Body, UploadFile, FastAPI, WebSocket
 from fastapi.responses import JSONResponse
 from common.status_code import HttpStatusCode
 from utils.api_status_manage import ApiStatusManagement
 from service.openai_service import call_openai
 from fastapi.middleware.cors import CORSMiddleware
+from utils.initialize_storage import Storage
 
 app = FastAPI()
 
@@ -24,8 +26,10 @@ connected_websockets = set()
 
 # 初始化接口
 @app.post("/initialize")
-def initialize():
-    pass
+def initialize(body: Dict[str, str]):
+    storage = Storage()
+    result = storage.initialize(body["filename"], body["file_type"])
+    return result
 
 
 # 询问接口
@@ -78,7 +82,7 @@ async def create_upload_file(file: UploadFile):
 # 全局异常处理
 @app.exception_handler(Exception)
 async def handle_exception(request, exc):
-    return JSONResponse(status_code=500, content={"code": HttpStatusCode.SERVER_ERROR.value, "msg": str(exc)})
+    return JSONResponse(status_code=500, content={"code": HttpStatusCode.ERROR.value, "msg": str(exc)})
 
 
 # 删除apikey接口

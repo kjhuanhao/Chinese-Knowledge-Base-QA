@@ -6,14 +6,13 @@
 
 from utils.vectors_client import VectorsClient
 from common.status_code import HttpStatusCode
-from typing import Dict
 from utils.files_parser import FileParser
 
 
 class Storage:
 
     @staticmethod
-    def initialize(filename, file_type) -> Dict:
+    def initialize(filename, file_type):
         """
         初始化向量数据库
         :param filename: 文件名称
@@ -23,16 +22,11 @@ class Storage:
         file_parser = FileParser()
         vectors_client = VectorsClient()
 
-        documents = file_parser.load(filename, file_type)
-        result = vectors_client.add(documents)
+        try:
+            documents = file_parser.load(filename, file_type)
+            result = vectors_client.add(documents)
+            return {"code": HttpStatusCode.SUCCESS.value, "msg": "初始化成功", "data": result}
+        except Exception as e:
+            return {"code": HttpStatusCode.ERROR.value, "msg": "初始化失败", "error": str(e)}
 
-        if result:
-            return {
-                "code": HttpStatusCode.SUCCESS.value,
-                "data": "初始化成功",
-            }
-        else:
-            return {
-                "code": HttpStatusCode.SERVER_ERROR.value,
-                "msg": "初始化失败",
-            }
+
