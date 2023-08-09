@@ -12,7 +12,8 @@ from utils.files_parser import FileParser
 
 class Storage:
 
-    def initialize(self, filename, file_type) -> Dict:
+    @staticmethod
+    def initialize(filename, file_type) -> Dict:
         """
         初始化向量数据库
         :param filename: 文件名称
@@ -23,7 +24,7 @@ class Storage:
         vectors_client = VectorsClient()
 
         documents = file_parser.load(filename, file_type)
-        result = vectors_client.add(documents, filename)
+        result = vectors_client.add(documents)
 
         if result:
             return {

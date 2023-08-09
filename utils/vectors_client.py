@@ -5,27 +5,28 @@
 # @Desc      : Chroma向量数据库客户端
 
 import uuid
-import numpy as np
+import chromadb
 
 from concurrent.futures import ThreadPoolExecutor
 from common.embedding import EmbeddingModel
 from typing import List
 from loguru import logger
 from langchain.docstore.document import Document
-from utils.redis_storage import RedisTool
-from similarities import Similarity
 
 
 class VectorsClient:
     _collection_name = "chinese_qa"
 
     def __init__(self):
-        self._client = RedisTool()
+        self._client = chromadb.PersistentClient(path="db")
+        self._collection = self._client.get_or_create_collection(
+            name="collection_name",
+            metadata={"hnsw:space": "cosine"}  # l2 is the default
+        )
 
     def add(self, documents: List[Document]):
         """
         向量数据库添加文档
-        :param file_name: 文档名称
         :param documents: 使用langchain文档加载器加载的文档
         :return:
         """
@@ -46,59 +47,48 @@ class VectorsClient:
         def process_document(i):
             id_ = ids[i]
             embedding = embedding_model.get_embedding(texts[i])
-            data = {
-                "id": id_,
-                "text": texts[i],
-                "embedding": embedding,
-                "metadata": meta_datas[i]
-            }
-            self._client.set(self._collection_name + f":{id_}", data)
-            logger.info("embed data: " + str(i))
-            # datas.append(data)
+            document = texts[i]
+            meta_data = meta_datas[i]
+            self._collection.add(
+                ids=id_,
+                embeddings=embedding,
+                documents=document,
+                metadatas=meta_data
+            )
+            # data = {
+            #     "id": id_,
+            #     "text": texts[i],
+            #     "embedding": embedding,
+            #     "metadata": meta_datas[i]
+            # }
+            # self._client.set(self._collection_name + f":{id_}", data)
+            logger.info("embed data: " + str(i + 1))
 
         with ThreadPoolExecutor(max_workers=5) as executor:
             for i in range(len(documents)):
                 executor.submit(process_document, i)
 
-        # collections = self._collection_name + f":{file_name}"
-        # self._client.set(collections, datas)
-
         logger.info("向量数据库存入完成")
         return True
 
-    def reset(self):
+    def reset(self) -> str:
         """
         重置向量数据库
         """
-        redis_tool = RedisTool()
-        keys = redis_tool.get_keys(self._collection_name + ":*")
-        redis_tool.delete(keys)
+        self._client.delete_collection(self._collection_name)
+        self._collection = self._client.get_or_create_collection(self._collection_name)
+        return "重置成功"
 
-    def similarity_search(self, query: str, top_k: int = 5) -> List:
+    def similarity_search(self, query: str, top_k: int = 5):
         """
         向量数据库相似度余弦搜索
         :param query: 询问语句
         :param top_k: 返回的相似文本数量
         :return: 相似性文本的列表
         """
-        redis_tool = RedisTool()
+
         embedding_model = EmbeddingModel()
-        collections_key = self._collection_name + ":*"
-        collections = redis_tool.get_values(collections_key)
-        search = Similarity(model_name_or_path=embedding_model.embedding_model_name)
         query_embedding = embedding_model.get_embedding(query)
+        results = self._collection.query(query_embedding, n_results=top_k)
 
-        cos_sim_list = []
-        for value in collections:
-            text_embedding = value["embedding"]
-            score = float(np.array(search.score_functions["cos_sim"](query_embedding, text_embedding))[0][0])
-            cos_sim_list.append(
-                {
-                    "text": value["text"],
-                    "score": score
-                }
-            )
-
-        cos_sim_list.sort(key=lambda x: x["score"], reverse=True)
-
-        return cos_sim_list[:top_k]
+        return results["documents"][0]
