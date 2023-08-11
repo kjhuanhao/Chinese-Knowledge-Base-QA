@@ -82,7 +82,7 @@ docker build -t <your_images_tag> Chinese-Knowledge-Base-QA/
 4. 运行容器
 自行修改`<>`中的内容
 ```shell
-docker run -id -p 13010:8000 --name <your_container_name> -v $PWD/db:/root/chineseQA <your_images_tag>
+docker run -id -p 13010:8000 --name <your_container_name> -v $PWD/db:/chineseQA/db <your_images_tag>
 ```
 
 

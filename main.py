@@ -9,6 +9,7 @@ from utils.api_status_manage import ApiStatusManagement
 from service.openai_service import call_openai
 from fastapi.middleware.cors import CORSMiddleware
 from utils.initialize_storage import Storage
+from loguru import logger
 
 app = FastAPI()
 
@@ -42,6 +43,7 @@ async def ask(websocket: WebSocket):
         while websocket in connected_websockets:
             data = await websocket.receive_text()
             if data:
+                logger.info("收到信息" + data)
                 async for content in call_openai(data):
                     await websocket.send_text(content)
 
@@ -103,4 +105,6 @@ async def homepage():
 
 
 if __name__ == "__main__":
+    if not os.path.isfile(".env"):
+        raise RuntimeError("请先配置.env文件")
     uvicorn.run(host="127.0.0.1", port=8000, app=app)
