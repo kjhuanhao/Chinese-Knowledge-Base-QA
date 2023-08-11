@@ -1,10 +1,10 @@
-# Customer service QA
+# Chinese Knowledge Base QA
 
 ## 介绍
 这个项目是一个基于openAI的中文知识库问答系统，可以用于智能客服等场景
 
 ## 项目用途
-智能客服等要求根据特定文件的对话系统
+智能客服等要求根据特定文件的中文对话系统
 
 ## 项目原理示意图
 ![pPnnZAe.md.png](https://s1.ax1x.com/2023/08/11/pPnnZAe.md.png)(https://imgse.com/i/pPnnZAe)
@@ -25,6 +25,7 @@
 - [x] 运维复杂度低，只需要引入redis数据库，即可快速构建
 - [x] 智能问答推荐，实现更加精准的答复
 - [x] 使用[M3e-base中文嵌入模型](https://huggingface.co/moka-ai/m3e-base)，召回文档能力更强
+- [x] 一键Docker部署
 - [ ] 队列问答，解决高并发问题
 - [ ] 智能缓存，问题重复下，无需走openAI接口，实现快速响应
 
