@@ -35,7 +35,7 @@ async def call_openai(question: str):
     }
 
     async with AsyncClient() as client:
-        async with client.stream("POST", url, headers=headers, json=data, timeout=20) as response:
+        async with client.stream("POST", url, headers=headers, json=data, timeout=30) as response:
             async for line in response.aiter_lines():
                 if line.strip() == "":
                     continue
