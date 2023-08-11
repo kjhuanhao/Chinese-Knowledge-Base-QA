@@ -1,7 +1,7 @@
 # Customer service QA
 
 ## 介绍
-这个项目是一个基于openAI的知识库问答系统小程序，可以用于智能客服等场景
+这个项目是一个基于openAI的中文知识库问答系统，可以用于智能客服等场景
 
 ## 项目用途
 智能客服等要求根据特定文件的对话系统
@@ -24,6 +24,7 @@
 - [x] ~~实现api_key状态管理，可查询用量余额，基于openAI账号的api_key管理~~
 - [x] 运维复杂度低，只需要引入redis数据库，即可快速构建
 - [x] 智能问答推荐，实现更加精准的答复
+- [x] 使用[M3e-base中文嵌入模型](https://huggingface.co/moka-ai/m3e-base)，召回文档能力更强
 - [ ] 队列问答，解决高并发问题
 - [ ] 智能缓存，问题重复下，无需走openAI接口，实现快速响应
 
@@ -36,10 +37,10 @@
 pip install -r requirements.txt
 ```
 
-如果速度慢可以自行下载该模型，在此项目根目录下命名为`text2vec-base-chinese`
+如果速度慢可以自行下载该模型，在此项目根目录下命名为`m3e-base`，存放模型数据
 ```bash
 git lfs install
-git clone https://huggingface.co/shibing624/text2vec-base-chinese
+git clone https://huggingface.co/moka-ai/m3e-base
 ```
 
 ### 配置
@@ -52,12 +53,6 @@ git clone https://huggingface.co/shibing624/text2vec-base-chinese
 - REDIS_DB：redis数据库，例如：`0`
 
 
-
-### CSV文件说明
-csv文件上传后会存储在项目data目录下，项目默认支持两列数据，第一列为`question`，第二列为`answer`，当然你也可以自定义列名或增加列名，
-需要修改`parsers`目录中的`csv_parser.py`和utils目录中的`embedding_vector.py`，暂时没有封装好这个地方，后续会进行优化
-
-
 ### 运行
 fastapi使用的是`uvicorn`，本项目`app.py`直接运行即可
 ```bash
@@ -68,6 +63,7 @@ python3 main.py
 
 ### 1. 初始化接口
 在使用之前需要初始化你的文件，在初始化过程中，会获取相关的embeddings然后存储到本地的chroma向量数据库，用于后续的相关问答操作
+> 由于向量化需要时间，此接口速度会较慢，暂时未做边界处理
 ```
 POST /initialize
 content-type: application/json
