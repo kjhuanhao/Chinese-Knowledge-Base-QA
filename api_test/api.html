@@ -5,24 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-    <p>连接状态: <span id="status">未连接</span></p>
-    <p>回复消息: <span id="message"></span></p>
-    <p><input id="inp"></p>
-    <button id="submit">发送</button>
+    <div>
+        <p>连接状态: <span id="status">未连接</span></p>
+        <p>回复消息: <span id="message"></span></p>
+        <input id="send">
+        <button id="submit">发送</button>
+    </div>
 <script>
     let status = document.getElementById('status');
     let message = document.getElementById('message');
-    let inp = document.getElementById('inp');
+    let send = document.getElementById('send');
     let submit = document.getElementById('submit');
 
     let socket = new WebSocket("ws://127.0.0.1:8000/ask")
-    socket.addEventListener("open", (event)=>{
+    socket.addEventListener("open", ()=>{
         status.innerText = '已连接';
     })
-    socket.addEventListener("error", (event)=>{
+    socket.addEventListener("error", ()=>{
         status.innerText = '已失败'
     })
-    socket.addEventListener("close", (event)=>{
+    socket.addEventListener("close", ()=>{
         status.innerText = '已关闭';
     })
     socket.addEventListener("message", (event)=>{
@@ -31,7 +33,7 @@
 
     submit.addEventListener('click', ()=>{
         message.innerText = '';
-        socket.send(inp.value);
+        socket.send(send.value);
     })
 
 </script>
