@@ -33,17 +33,6 @@
 
 ## 使用说明
 
-### 必备模块 
-```bash
-pip install -r requirements.txt
-```
-
-如果速度慢可以自行下载该模型，在此项目根目录下命名为`m3e-base`，存放模型数据
-```bash
-git lfs install
-git clone https://huggingface.co/moka-ai/m3e-base
-```
-
 ### 配置
 需要修改`env_template`为`.env`文件，具体参数说明如下：
 - OPENAI_API_BASE：openAI代理地址设置，例如：`https://xxxxx.com/v1` ，如果无需使用代理，请留空即可，默认会走官方接口
@@ -54,11 +43,48 @@ git clone https://huggingface.co/moka-ai/m3e-base
 - REDIS_DB：redis数据库，例如：`0`
 
 
-### 运行
-fastapi使用的是`uvicorn`，本项目`app.py`直接运行即可
+### 部署运行
+#### 直接运行
+1. 安装必备模块
+```bash
+pip install -r requirements.txt
+```
+
+2. 安装项目依赖的模型，如果速度慢可以自行下载该模型，在此项目根目录下命名为`m3e-base`，存放模型数据
+```bash
+git lfs install
+git clone https://huggingface.co/moka-ai/m3e-base
+```
+
+3. fastapi使用的是`uvicorn`，本项目`app.py`直接运行即可
 ```bash
 python3 main.py
 ```
+
+#### Docker部署
+1. 下载本项目代码
+```shell
+git clone https://github.com/kjhuanhao/Chinese-Knowledge-Base-QA.git
+```
+
+2. 安装项目依赖的模型，如果速度慢可以自行下载该模型，在此项目根目录下命名为`m3e-base`，存放模型数据
+```bash
+git lfs install
+git clone https://huggingface.co/moka-ai/m3e-base
+```
+
+3. 构建镜像
+自行修改`<>`中的内容
+```shell
+docker build -t <your_images_tag> Chinese-Knowledge-Base-QA/
+```
+
+4. 运行容器
+自行修改`<>`中的内容
+```shell
+docker run -id -p 13010:8000 --name <your_container_name> -v $PWD/db:/root/chineseQA <your_images_tag>
+```
+
 
 ## 相关接口
 
