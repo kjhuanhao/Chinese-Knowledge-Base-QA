@@ -1,4 +1,4 @@
-# Chinese Knowledge Base QA
+# Chinese Knowledge Base QA 中文知识库问答
 
 ## 介绍
 这个项目是一个基于openAI的中文知识库问答系统，可以用于智能客服等场景
@@ -16,7 +16,7 @@
 - csv
 
 ## 项目特色
-- [x] 由于小程序不支持event-stream，本项目基于websocket实现流式传输的效果
+- [x] 由于小程序不支持event-stream，本项目基于websocket实现流式传输的效果，适用更多场景
 - [x] 基于openAI的ChatModel`(gpt-3.5-turbo)`
 - [x] 支持多个api_key动态更换api_key
 - [x] 基于chroma存储向量数据和进行相似度检索，默认的检索方式是余弦搜索
