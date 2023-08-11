@@ -1,20 +1,25 @@
-# CSV_QA
+# Customer service QA
 
 ## 介绍
-这个项目是一个基于openAI的CSV文件问答系统
+这个项目是一个基于openAI的知识库问答系统小程序，可以用于智能客服等场景
 
 ## 项目用途
-智能客服等要求精准回答的对话系统
+智能客服等要求根据特定文件的对话系统
 
-## 为什么是csv
-csv表格形式有利于构建prompt，可以更加精准进行匹配向量和匹配答案
+## 项目原理示意图
+![pPnnZAe.md.png](https://s1.ax1x.com/2023/08/11/pPnnZAe.md.png)(https://imgse.com/i/pPnnZAe)
+
+## 项目默认支持的文件格式
+- docs
+- pdf
+- md
+- csv
 
 ## 项目特色
-- [x] 流式传输
+- [x] 由于小程序不支持event-stream，本项目基于websocket实现流式传输的效果
 - [x] 基于openAI的ChatModel`(gpt-3.5-turbo)`
-- [x] 答案与csv相似度动态匹配，实现动态prompt
-- [x] 支持多个api_key动态更换api_key，一定程度上解决3次/min调用的问题
-- [x] 基于redis存储csv向量数据
+- [x] 支持多个api_key动态更换api_key
+- [x] 基于chroma存储向量数据和进行相似度检索，默认的检索方式是余弦搜索
 - [x] 支持openAI代理
 - [x] ~~实现api_key状态管理，可查询用量余额，基于openAI账号的api_key管理~~
 - [x] 运维复杂度低，只需要引入redis数据库，即可快速构建
@@ -39,18 +44,13 @@ git clone https://huggingface.co/shibing624/text2vec-base-chinese
 
 ### 配置
 需要修改`env_template`为`.env`文件，具体参数说明如下：
-- REDIS_CSV_NAME：作为csv文件向量化数据的key值，例如：`we_qa_csv` ，可以不修改
-- CSV_FILE_NAME：存储在`data`目录下的csv文件，指定用于问答的csv文件，这里只能指定一个唯一的，例如：`test.csv` 
 - OPENAI_API_BASE：openAI代理地址设置，例如：`https://xxxxx.com/v1` ，如果无需使用代理，请留空即可，默认会走官方接口
-- EXPIRE_DAYS：所有api_key在redis中的可留存时间，例如：`900` (默认单位为`天数`)
+- EXPIRE_DAYS：所有api_key在redis中的可留存时间，例如：`60` (默认单位为`天数`)
 - REDIS_HOST：redis主机地址，例如`127.0.0.1`
 - REDIS_PORT：redis端口号，例如：`6379`
 - REDIS_PASSWORD：redis密码，没有密码则为空即可
 - REDIS_DB：redis数据库，例如：`0`
-- PINECONE_KEY：pinecone的key值
-- PINECONE_ENV：pinecone环境名称
-- PINECONE_INDEX：pinecone索引名称
-- PINECONE_NAMESPACE：pinecone命名空间，本项目所有的向量数据都会存储在该命名空间下
+
 
 
 ### CSV文件说明
@@ -67,11 +67,18 @@ python3 main.py
 ## 相关接口
 
 ### 1. 初始化接口
-在使用之前需要初始化你的csv文件，在初始化过程中，会获取相关的embeddings然后存储到redis中
-> 当然，如果你更新了你的csv文件，你也需要重新进行一次初始化操作
+在使用之前需要初始化你的文件，在初始化过程中，会获取相关的embeddings然后存储到本地的chroma向量数据库，用于后续的相关问答操作
 ```
 POST /initialize
+content-type: application/json
+
+{
+    "filename": "we",
+    "file_type": "csv"
+}
+
 ```
+
 **成功示例**
 ```
 {
@@ -91,7 +98,7 @@ POST /initialize
 ```
 
 ### 2. 上传文件接口
-目前仅支持单文件上传，上传后会存储在项目data目录下，请注意修改.env下的`CSV_FILE_NAME`
+目前仅支持单文件上传，上传后会存储在项目data目录下
 ```
 POST /upload_file
 content-type: multipart/form-data
@@ -107,35 +114,12 @@ content-type: multipart/form-data
 
 
 ### 3. 问答接口
+接口只接受普通文本，返回也是文本，问答接口无上下文，建议前端可以根据业务需要每次收发信息后，可以断开并重新建立连接
 ```
-POST /ask
-content-type: application/json
-
-{
-    "question": "你好",
-    "stream": "0" #0: 不使用流式传输，1: 使用流式传输
-}
+GET /ask
+Upgrade: websocket
+Connection: Upgrade
 ```
-
-**成功示例**
-```
-text
-```
-
-```
-{
-    "code": 200,
-    "data": "text"
-}
-```
-
-
-**失败示例**
-```
-"{"code": "500", "msg": "error"}"
-```
-
-
 
 
 ### 4. 添加api_key接口

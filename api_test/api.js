@@ -1,3 +1,4 @@
+//此测试文件为废弃方案
 fetch('http://127.0.0.1:8000/ask', {
   method: 'POST',
   headers: {
