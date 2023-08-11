@@ -2,7 +2,7 @@ FROM python:3.11
 
 LABEL authors="Jiahao"
 
-WORKDIR ./studentQA
+WORKDIR ./chineseQA
 
 ADD . .
 
