@@ -37,21 +37,17 @@ def initialize(body: Dict[str, str]):
 @app.websocket("/ask")
 async def ask(websocket: WebSocket):
     await websocket.accept()
-    connected_websockets.add(websocket)
 
     try:
-        while websocket in connected_websockets:
+        while True:
             data = await websocket.receive_text()
             if data:
                 logger.info("收到信息" + data)
                 async for content in call_openai(data):
                     await websocket.send_text(content)
-
-                connected_websockets.discard(websocket)
-                connected_websockets.add(websocket)
+                break
     finally:
         await websocket.close()
-        connected_websockets.discard(websocket)
 
 
 # api_key添加接口

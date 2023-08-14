@@ -82,6 +82,7 @@ docker build -t <your_images_tag> Chinese-Knowledge-Base-QA/
 4. 运行容器
 自行修改`<>`中的内容
 ```shell
+mkdir db
 docker run -id -p 13010:8000 --name <your_container_name> -v $PWD/db:/chineseQA/db <your_images_tag>
 ```
 
@@ -137,7 +138,7 @@ content-type: multipart/form-data
 
 
 ### 3. 问答接口
-接口只接受普通文本，返回也是文本，问答接口无上下文，建议前端可以根据业务需要每次收发信息后，可以断开并重新建立连接，默认的gpt等待时间为30s，如果超过30s未响应socket会断开连接
+接口只接受普通文本，返回也是文本，问答接口无上下文，默认的gpt等待时间为30s，如果超过30s未响应socket会断开连接，在后端响应完信息后会主动断开socket连接
 ```
 GET /ask
 Upgrade: websocket
