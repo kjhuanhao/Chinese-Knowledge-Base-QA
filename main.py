@@ -103,4 +103,4 @@ async def homepage():
 if __name__ == "__main__":
     if not os.path.isfile(".env"):
         raise RuntimeError("请先配置.env文件")
-    uvicorn.run(host="127.0.0.1", port=8000, app=app, workers=10)
+    uvicorn.run(host="127.0.0.1", port=8000, app=app)
