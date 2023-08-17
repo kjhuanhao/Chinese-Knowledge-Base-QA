@@ -33,10 +33,15 @@ def initialize(body: Dict[str, str]):
     return result
 
 
+active_websockets = set()
+
 # 询问接口
 @app.websocket("/ask")
 async def ask(websocket: WebSocket):
     await websocket.accept()
+
+    # 将新连接添加到活跃连接集合
+    active_websockets.add(websocket)
 
     try:
         while True:
@@ -44,9 +49,13 @@ async def ask(websocket: WebSocket):
             if data:
                 logger.info("收到信息" + data)
                 async for content in call_openai(data):
-                    await websocket.send_text(content)
+                    # 向所有活跃连接广播消息
+                    for ws in active_websockets:
+                        await ws.send_text(content)
                 break
     finally:
+        # 从活跃连接集合中移除连接
+        active_websockets.remove(websocket)
         await websocket.close()
 
 

@@ -6,6 +6,9 @@
 ## 项目用途
 智能客服等要求根据特定文件的中文对话系统
 
+## 项目运行效果(以校园知识库问答为例子)
+![gif](./img/screenshots.gif)
+
 ## 项目原理示意图
 ![pPnnZAe.md.png](https://s1.ax1x.com/2023/08/11/pPnnZAe.md.png)(https://imgse.com/i/pPnnZAe)
 
@@ -16,20 +19,20 @@
 - csv
 
 ## 项目特色
-- [x] 由于小程序不支持event-stream，本项目基于websocket实现流式传输的效果，适用更多场景
+- [x] 前后端分离，前端为`小程序`，后端采用`fastapi`
+- [x] 由于小程序不支持`event-stream`，本项目基于`websocket`实现流式传输的效果，适用更多场景
 - [x] 基于openAI的ChatModel`(gpt-3.5-turbo)`
 - [x] 支持多个api_key动态更换api_key
-- [x] 基于chroma存储向量数据和进行相似度检索，默认的检索方式是余弦搜索
-- [x] 支持openAI代理
+- [x] 基于`chroma`存储向量数据和进行相似度检索，默认的检索方式是余弦搜索
+- [x] 支持`openAI`代理
 - [x] ~~实现api_key状态管理，可查询用量余额，基于openAI账号的api_key管理~~
-- [x] 运维复杂度低，只需要引入redis数据库，即可快速构建
+- [x] 运维复杂度低，只需要引入`redis`数据库，即可快速构建
 - [x] 智能问答推荐，实现更加精准的答复
 - [x] 使用[M3e-base中文嵌入模型](https://huggingface.co/moka-ai/m3e-base)，召回文档能力更强
-- [x] 一键Docker部署
-- [ ] 队列问答，解决高并发问题
+- [x] 一键`Docker`部署
 - [ ] 智能缓存，问题重复下，无需走openAI接口，实现快速响应
 
-> 由于官方的余额查询相关接口鉴权方法更换，现已去除此功能
+> 由于官方的余额查询相关接口鉴权方法更换，现已去除接口动态管理功能
 
 ## 使用说明
 
@@ -42,8 +45,7 @@
 - REDIS_PASSWORD：redis密码，没有密码则为空即可
 - REDIS_DB：redis数据库，例如：`0`
 
-
-### 部署运行
+### 后端部署运行
 #### 直接运行
 1. 安装必备模块
 ```bash
