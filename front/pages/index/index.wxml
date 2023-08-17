@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="header">
+    <view class="user"> </view>
+    <text class="user-title">请提出你想要知道的问题</text>
+  </view>
+
+  <scroll-view id="scrollView" scroll-top="{{ScrollTop}}" scroll-y="{{true}}" class="content" scroll-into-view="{{bottom}}">
+    <view class="contentItem">
+      <text class="question">欢迎使用新生问答模块！</text>
+      <view class="answer">您可以在底部输入框输入您想要资讯的问题，稍微等待一会就能获取到问题的答案. </view>
+    </view>
+    <view class="contentItem" wx:for="{{contentInfo}}" wx:key="{{time}}">
+      <text class="question">{{item.question}}</text>
+      <view class="answer">
+        <text wx:if="{{item.time === currentTime && inputFlag}}" class="cu-load load-icon loading"></text>
+        <text class="answerInfo">{{item.answer}}</text>
+      </view>
+      <view class="deletefun">
+        <view class="time">{{item.time}}</view>
+        <view class="deleteBox" bindtap="removeAnswer" id="{{item.time}}">
+          <image class="delete" src="/pages/assets/delete.svg" mode="" />
+        </view>
+      </view>
+    </view>
+    <view class="scrollBottom" id="scrollBottom"> </view>
+  </scroll-view>
+
+  <view class="footer">
+    <scroll-view scroll-x="{{true}}" style="margin-bottom: 16rpx;">
+      <view class="hotQuestion">
+        <view class="hotQuestionItem" bindtap="onTabHot" id="{{item}}" wx:for="{{hotQuestions}}" wx:key="*this">
+          {{item}}
+        </view>
+      </view>
+    </scroll-view>
+    <view class="search {{inputAction ? ' action' : ''}}">
+      <input class="ask" id="questionInfo" model:value="{{ questionInfo }}" type="text" placeholder="请输入您要问的问题" bindfocus="onTabInput" bindblur="offTabInput" bindinput="connectWebSocket"></input>
+      <image class="send" src="/pages/assets/send.svg" mode="" bindtap="onSendQuestion" />
+    </view>
+
+  </view>
+
+  <view class="shade" wx:if="{{inputFlag}}">
+    <view class="cu-load loading">请耐心等待一下</view>
+  </view>
+</view>

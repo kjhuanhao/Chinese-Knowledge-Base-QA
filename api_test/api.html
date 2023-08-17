@@ -17,7 +17,7 @@
     let send = document.getElementById('send');
     let submit = document.getElementById('submit');
 
-    let socket = new WebSocket("ws://localhost:8000")
+    let socket = new WebSocket("ws://127.0.0.1:8000/ask")
     socket.addEventListener("open", ()=>{
         status.innerText = '已连接';
     })

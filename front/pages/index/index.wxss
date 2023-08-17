@@ -1,0 +1,208 @@
+/* @media (prefers-color-scheme: dark) {
+  .container {
+    filter: invert(0) !important;
+  }
+  .footer {
+    filter: invert(100%) !important;
+  }
+  .ask {
+    filter: invert(100%) !important;
+  }
+  .title {
+    filter: invert(100%) !important;
+  } 
+}*/
+
+.container {
+  height: 100vh;
+  box-sizing: border-box;
+  font-size: 30rpx;
+  display: flex;
+  flex-direction: column;
+  /* background-color: #121212 !important; */
+  background-color: #f6f6f6 !important;
+}
+
+/* 顶部 */
+.container .header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  background-color: #f0f0f0;
+  /* background: linear-gradient(to right, #c6d2f7, #d1d1d1); */
+  width: 100%;
+  height: 120rpx;
+  line-height: 120rpx;
+  padding: 0 40rpx;
+}
+
+.container .header .user {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  background-color: #b3cddb;
+}
+
+.container .header .user-title {
+  margin-left: 20rpx;
+  font-size: 30rpx;
+  letter-spacing: 2rpx;
+  color: #3f6666;
+}
+
+/* 中间内容 */
+.container .content {
+  box-sizing: border-box;
+  width: 100%;
+  height: 70%;
+  margin-top: 20rpx;
+  padding: 40rpx;
+  margin: 0 0 10% 0;
+}
+
+.container .content .contentItem {
+  box-sizing: border-box;
+  padding: 28rpx;
+  width: 100%;
+  background: linear-gradient(to right, #c9d5fd, #e2e2e2);
+  /* background-color: #e6e3e3; */
+  border-radius: 8px 8px 0 !important;
+  box-shadow: 0 16px 20px #aea7df0f;
+  align-self: flex-end;
+  color: #2f4f4f;
+  margin-bottom: 40rpx;
+}
+
+.container .content .contentItem:last-child {
+  margin-bottom: 100rpx;
+}
+
+.container .content .contentItem .question {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.container .content .contentItem .answer {
+  margin-top: 18rpx;
+  word-wrap: break-word;
+  line-height: 42rpx;
+}
+
+.container .content .contentItem .answer .cu-load {
+  display: inline-block;
+  font-size: 10rpx;
+}
+
+.container .content .contentItem .deletefun {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.container .content .contentItem .deletefun .time {
+  font-size: 28rpx;
+}
+
+.container .content .contentItem .deletefun .deleteBox {
+  width: 32rpx;
+  height: 32rpx;
+  margin-left: 20rpx;
+}
+
+.container .content .contentItem .deletefun .deleteBox .delete {
+  width: 100%;
+  height: 100%;
+}
+
+.container .content .contentItem .scrollBottom {
+  height: 2rpx;
+}
+
+/* 底部 */
+.container .footer {
+  position: relative;
+  bottom: 24rpx;
+  left: 0;
+  padding: 0 40rpx;
+}
+
+/* 热门问题 */
+.container .footer .hotQuestion {
+  width: 100%;
+  height: 68rpx;
+  line-height: 68rpx;
+  color: rgb(230, 228, 228);
+  display: flex;
+}
+
+.container .footer .hotQuestion .hotQuestionItem {
+  /* display: inline-block; */
+  /* border: 1px solid #40a9ff !important; */
+  border: 1px solid #b4d0d3 !important;
+  border-radius: 15rpx;
+  padding: 0 16rpx;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+  /* background-color: #121f2a; */
+  color: #c0bdbd;
+  color: rgba(47, 79, 79, 0.7);
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
+
+.container .footer .search {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 120rpx;
+  box-sizing: border-box;
+  /* background-color: #2a2a2a; */
+  /* background-color: #93c2c5; */
+  background: linear-gradient(to left, #c6d2f7, #d1d1d1);
+  padding: 0 32rpx 0 20rpx;
+  border-radius: 15rpx;
+  transition: all 0.8s;
+}
+
+.container .footer .search.action {
+  background-color: #121f2a;
+  border: 1px solid #6bb2ec;
+}
+
+.container .footer .search .ask {
+  flex: 1;
+  font-size: 30rpx;
+  color: #ffffff;
+}
+
+.container .footer .search .send {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.container .shade {
+  z-index: 100;
+  position: fixed;
+  display: flex;
+  bottom: 0rpx;
+  height: 20%;
+  /* height: 250rpx; */
+  left: 0;
+  width: 100%;
+  padding: 0 40rpx;
+  background-color: rgba(255, 255, 255, 0.65);
+}
+
+.container .shade .loading {
+  z-index: 101;
+  margin: auto;
+  color: #999;
+}

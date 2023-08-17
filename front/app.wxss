@@ -1,0 +1,2 @@
+@import "/pages/commonCSS/icon.wxss";
+@import "/pages/commonCSS/main.wxss";
